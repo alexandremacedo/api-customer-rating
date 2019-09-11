@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Clients;
+use App\Models\Contributors;
 use Illuminate\Support\Facades\Validator; 
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientsController extends Controller
+class ContributorsController extends Controller
 {
     
     private $model;
 
-    public function __construct(Clients $clients)
+    public function __construct(Contributors $contributors)
     {
-        $this->model = $clients;
+        $this->model = $contributors;
     }
 
     public function getAll(){
 
         try{
-            $clients = $this->model->all();
-            if(count($clients) > 0){
-                return response()->json($clients, Response::HTTP_OK);
+            $contributors = $this->model->all();
+            if(count($contributors) > 0){
+                return response()->json($contributors, Response::HTTP_OK);
             }else{
                 return response()->json([], Response::HTTP_OK);
             }
@@ -38,9 +38,9 @@ class ClientsController extends Controller
     public function get($id){
         
         try{
-            $client = $this->model->find($id);
-            if($client!==null){
-                return response()->json($client, Response::HTTP_OK);
+            $contributor = $this->model->find($id);
+            if($contributor!==null){
+                return response()->json($contributor, Response::HTTP_OK);
             }else{
                 return response()->json(null, Response::HTTP_OK);
             }
@@ -61,8 +61,8 @@ class ClientsController extends Controller
             ]
         );
         try{
-            $client = $this->model->create($req->all());
-            return response()->json($client, Response::HTTP_CREATED);
+            $contributor = $this->model->create($req->all());
+            return response()->json($contributor, Response::HTTP_CREATED);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -72,10 +72,10 @@ class ClientsController extends Controller
 
    public function update($id, Request $req){
             try{
-                $client = $this->model->find($id)
+                $contributor = $this->model->find($id)
                     ->update($req->all());
         
-                return response()->json($client, Response::HTTP_OK);
+                return response()->json($contributor, Response::HTTP_OK);
             }catch (QueryException $exception){
                 return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }    
@@ -86,7 +86,7 @@ class ClientsController extends Controller
    public function destroy($id){
 
         try{
-            $client = $this->model->delete($id);
+            $contributor = $this->model->delete($id);
             return response()->json(null, Response::HTTP_OK);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);

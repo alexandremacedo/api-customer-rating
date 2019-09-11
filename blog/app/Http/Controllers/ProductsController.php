@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Clients;
+use App\Models\Products;
 use Illuminate\Support\Facades\Validator; 
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientsController extends Controller
+class ProductsController extends Controller
 {
     
     private $model;
 
-    public function __construct(Clients $clients)
+    public function __construct(Products $products)
     {
-        $this->model = $clients;
+        $this->model = $products;
     }
 
     public function getAll(){
 
         try{
-            $clients = $this->model->all();
-            if(count($clients) > 0){
-                return response()->json($clients, Response::HTTP_OK);
+            $products = $this->model->all();
+            if(count($products) > 0){
+                return response()->json($products, Response::HTTP_OK);
             }else{
                 return response()->json([], Response::HTTP_OK);
             }
@@ -38,9 +38,9 @@ class ClientsController extends Controller
     public function get($id){
         
         try{
-            $client = $this->model->find($id);
-            if($client!==null){
-                return response()->json($client, Response::HTTP_OK);
+            $product = $this->model->find($id);
+            if($product!==null){
+                return response()->json($product, Response::HTTP_OK);
             }else{
                 return response()->json(null, Response::HTTP_OK);
             }
@@ -55,14 +55,12 @@ class ClientsController extends Controller
             $req->all(),
             [
                 'name' => 'required | max:40 | min:3',
-                'email' => 'required | max:60 | min:3',
-                'phone' => 'required | max:13 | min:12',
-                'cpf' => 'required | max:11 | min:11',
+                'price' => 'required | double'
             ]
         );
         try{
-            $client = $this->model->create($req->all());
-            return response()->json($client, Response::HTTP_CREATED);
+            $product = $this->model->create($req->all());
+            return response()->json($product, Response::HTTP_CREATED);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -72,10 +70,10 @@ class ClientsController extends Controller
 
    public function update($id, Request $req){
             try{
-                $client = $this->model->find($id)
+                $product = $this->model->find($id)
                     ->update($req->all());
         
-                return response()->json($client, Response::HTTP_OK);
+                return response()->json($product, Response::HTTP_OK);
             }catch (QueryException $exception){
                 return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }    
@@ -86,7 +84,7 @@ class ClientsController extends Controller
    public function destroy($id){
 
         try{
-            $client = $this->model->delete($id);
+            $product = $this->model->delete($id);
             return response()->json(null, Response::HTTP_OK);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);

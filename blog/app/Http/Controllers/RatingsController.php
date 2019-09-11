@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Clients;
+use App\Models\Ratings;
 use Illuminate\Support\Facades\Validator; 
 use Symfony\Component\HttpFoundation\Response;
 
-class ClientsController extends Controller
+class RatingsController extends Controller
 {
     
     private $model;
 
-    public function __construct(Clients $clients)
+    public function __construct(Ratings $ratings)
     {
-        $this->model = $clients;
+        $this->model = $ratings;
     }
 
     public function getAll(){
 
         try{
-            $clients = $this->model->all();
-            if(count($clients) > 0){
-                return response()->json($clients, Response::HTTP_OK);
+            $ratings = $this->model->all();
+            if(count($ratings) > 0){
+                return response()->json($ratings, Response::HTTP_OK);
             }else{
                 return response()->json([], Response::HTTP_OK);
             }
@@ -38,9 +38,9 @@ class ClientsController extends Controller
     public function get($id){
         
         try{
-            $client = $this->model->find($id);
-            if($client!==null){
-                return response()->json($client, Response::HTTP_OK);
+            $rating = $this->model->find($id);
+            if($rating!==null){
+                return response()->json($rating, Response::HTTP_OK);
             }else{
                 return response()->json(null, Response::HTTP_OK);
             }
@@ -54,15 +54,13 @@ class ClientsController extends Controller
         $validator = Validator::make(
             $req->all(),
             [
-                'name' => 'required | max:40 | min:3',
-                'email' => 'required | max:60 | min:3',
-                'phone' => 'required | max:13 | min:12',
-                'cpf' => 'required | max:11 | min:11',
+                'note' => 'required | integer',
+                'description' => 'required | text',
             ]
         );
         try{
-            $client = $this->model->create($req->all());
-            return response()->json($client, Response::HTTP_CREATED);
+            $rating = $this->model->create($req->all());
+            return response()->json($rating, Response::HTTP_CREATED);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -72,10 +70,10 @@ class ClientsController extends Controller
 
    public function update($id, Request $req){
             try{
-                $client = $this->model->find($id)
+                $rating = $this->model->find($id)
                     ->update($req->all());
         
-                return response()->json($client, Response::HTTP_OK);
+                return response()->json($rating, Response::HTTP_OK);
             }catch (QueryException $exception){
                 return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
             }    
@@ -86,7 +84,7 @@ class ClientsController extends Controller
    public function destroy($id){
 
         try{
-            $client = $this->model->delete($id);
+            $rating = $this->model->delete($id);
             return response()->json(null, Response::HTTP_OK);
         }catch (QueryException $exception){
             return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);

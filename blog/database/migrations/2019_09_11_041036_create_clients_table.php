@@ -19,7 +19,8 @@ class CreateClientsTable extends Migration
             $table->string('email', 60);
             $table->string('phone', 13);
             $table->string('cpf', 11);
-            $table->timestamps();
+            $table->softDeletesTz();
+            $table->timestampsTz();
         });
     }
 
