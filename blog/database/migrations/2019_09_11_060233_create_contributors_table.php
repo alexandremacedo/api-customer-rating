@@ -19,9 +19,11 @@ class CreateContributorsTable extends Migration
             $table->string('email', 60);
             $table->string('phone', 13);
             $table->string('cpf', 11);
-            $table->foreign('store-id')->references('id')->on('stores');
+            $table->bigInteger('store_id')->unsigned();
             $table->softDeletesTz();
             $table->timestamps();
+            
+            $table->foreign('store_id')->references('id')->on('stores');
         });
     }
 

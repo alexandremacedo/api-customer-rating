@@ -16,11 +16,15 @@ class CreateAcquisitionsTable extends Migration
         Schema::create('acquisitions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('payment-type', 20);
-            $table->foreign('client-id')->references('id')->on('clients');
-            $table->foreign('product-id')->references('id')->on('products');
-            $table->foreign('contributor-id')->references('id')->on('contributors');
+            $table->bigInteger('client_id')->length(10)->unsigned();
+            $table->bigInteger('product_id')->length(10)->unsigned();
+            $table->bigInteger('contributor_id')->length(10)->unsigned();
             $table->softDeletesTz();
             $table->timestampsTz();
+
+            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('contributor_id')->references('id')->on('contributors');
         });
     }
 
