@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Transactions;
+
 
 class Ratings extends Model {
 
@@ -13,10 +15,16 @@ class Ratings extends Model {
   
   protected $fillable = [
 
-    'note',
-    'description'
+    'grade',
+    'description',
+    'transaction_id'
 
   ];
+
+  public function transactions()
+  {
+      return $this->hasOne(Transactions::class);
+  }  
 
   protected $dates = ['deleted_at'];
 

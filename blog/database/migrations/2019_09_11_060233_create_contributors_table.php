@@ -16,9 +16,7 @@ class CreateContributorsTable extends Migration
         Schema::create('contributors', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 40);
-            $table->string('email', 60);
-            $table->string('phone', 13);
-            $table->string('cpf', 11);
+            $table->string('email', 60)->unique();
             $table->bigInteger('store_id')->unsigned();
             $table->softDeletesTz();
             $table->timestamps();

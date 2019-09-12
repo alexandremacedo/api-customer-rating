@@ -16,7 +16,7 @@ class CreateStoresTable extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name', 40);
-            $table->softDeletesTz();
+            $table->softDeletes();
             $table->timestampsTz();
         });
     }

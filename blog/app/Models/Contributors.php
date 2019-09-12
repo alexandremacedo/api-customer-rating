@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Stores;
 
 class Contributors extends Model {
 
@@ -15,10 +16,14 @@ class Contributors extends Model {
 
     'name',
     'email',
-    'phone',
-    'cpf',
+    'store_id'
 
   ];
+
+  public function stores()
+  {
+    return $this->hasOne(Stores::class);
+  } 
 
   protected $dates = ['deleted_at'];
 

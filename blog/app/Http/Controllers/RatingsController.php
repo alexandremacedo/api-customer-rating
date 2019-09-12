@@ -10,86 +10,48 @@ use Symfony\Component\HttpFoundation\Response;
 class RatingsController extends Controller
 {
     
-    private $model;
-
-    public function __construct(Ratings $ratings)
-    {
-        $this->model = $ratings;
-    }
-
     public function getAll(){
 
         try{
-            $ratings = $this->model->all();
-            if(count($ratings) > 0){
-                return response()->json($ratings, Response::HTTP_OK);
-            }else{
-                return response()->json([], Response::HTTP_OK);
-            }
+            $ratings = Ratings::all();
+            return response()->json($ratings, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'DATABASE ERROR'], 500);
         }
 
-       
-
-        
     }
 
     public function get($id){
         
         try{
-            $rating = $this->model->find($id);
-            if($rating!==null){
-                return response()->json($rating, Response::HTTP_OK);
-            }else{
-                return response()->json(null, Response::HTTP_OK);
-            }
+            $rating = Ratings::find($id);            
+            return response()->json($rating, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'RATING NOT FOUND'], 500);
         }
     
     }
 
     public function store(Request $req){
-        $validator = Validator::make(
-            $req->all(),
+        $this->validate(
+            $req,
             [
-                'note' => 'required | integer',
-                'description' => 'required | text',
+                'grade' => 'required|numeric|max:10|min:0',
+                'description' => 'required',
+                'transaction_id' => 'required|numeric'
             ]
         );
         try{
-            $rating = $this->model->create($req->all());
-            return response()->json($rating, Response::HTTP_CREATED);
-        }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
 
+            $rating = new Ratings();
+            $rating->fill($req->all());
+            $rating->save();
+            
+            return response()->json($rating, 200);
+        }catch (QueryException $exception){
+            return response()->json(['error' => 'RATING ERROR'], 500);
+        } 
         
     }
-
-   public function update($id, Request $req){
-            try{
-                $rating = $this->model->find($id)
-                    ->update($req->all());
-        
-                return response()->json($rating, Response::HTTP_OK);
-            }catch (QueryException $exception){
-                return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }    
-
-        
-   }
-
-   public function destroy($id){
-
-        try{
-            $rating = $this->model->delete($id);
-            return response()->json(null, Response::HTTP_OK);
-        }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-        
-   }
 
 }

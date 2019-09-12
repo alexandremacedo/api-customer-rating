@@ -15,13 +15,13 @@ class CreateRatingsTable extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('note');
+            $table->integer('grade');
             $table->text('description');
-            $table->bigInteger('acquisition_id')->length(10)->unsigned();
+            $table->bigInteger('transaction_id')->length(10)->unsigned();
             $table->softDeletesTz();
             $table->timestamps();
 
-            $table->foreign('acquisition_id')->references('id')->on('acquisitions');
+            $table->foreign('transaction_id')->references('id')->on('transactions');
         });
     }
 

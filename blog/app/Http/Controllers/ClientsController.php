@@ -10,74 +10,70 @@ use Symfony\Component\HttpFoundation\Response;
 class ClientsController extends Controller
 {
     
-    private $model;
-
-    public function __construct(Clients $clients)
-    {
-        $this->model = $clients;
-    }
-
     public function getAll(){
 
         try{
-            $clients = $this->model->all();
-            if(count($clients) > 0){
-                return response()->json($clients, Response::HTTP_OK);
-            }else{
-                return response()->json([], Response::HTTP_OK);
-            }
+            $clients = Clients::all();
+            return response()->json($clients, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'DATABASE ERROR'], 500);
         }
 
-       
-
-        
     }
 
     public function get($id){
         
         try{
-            $client = $this->model->find($id);
-            if($client!==null){
-                return response()->json($client, Response::HTTP_OK);
-            }else{
-                return response()->json(null, Response::HTTP_OK);
-            }
+            $client = Clients::find($id);            
+            return response()->json($client, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'CLIENT NOT FOUND'], 500);
         }
     
     }
 
     public function store(Request $req){
-        $validator = Validator::make(
-            $req->all(),
+         $this->validate(
+            $req,
             [
-                'name' => 'required | max:40 | min:3',
-                'email' => 'required | max:60 | min:3',
-                'phone' => 'required | max:13 | min:12',
-                'cpf' => 'required | max:11 | min:11',
+                'name' => 'required|max:40|min:3',
+                    'email' => 'required|regex:/^.+@.+$/i',
+                    'phone' => 'required|max:13|min:12',
+                    'cpf' => 'required|max:11|min:11'
             ]
         );
         try{
-            $client = $this->model->create($req->all());
-            return response()->json($client, Response::HTTP_CREATED);
-        }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
 
+            $client = new Clients();
+            $client->fill($req->all());
+            $client->save();
+            
+            return response()->json($client, 200);
+        }catch (QueryException $exception){
+            return response()->json(['error' => 'CLIENT ERROR'], 500);
+        } 
         
     }
 
    public function update($id, Request $req){
+            $this->validate(
+                $req,
+                [
+                    'name' => 'required|max:40|min:3',
+                    'email' => 'required|regex:/^.+@.+$/i',
+                    'phone' => 'required|max:13|min:12',
+                    'cpf' => 'required|max:11|min:11'
+                ]
+            );
+
             try{
-                $client = $this->model->find($id)
+                
+                $client = Clients::find($id)
                     ->update($req->all());
         
-                return response()->json($client, Response::HTTP_OK);
+                return response()->json($client, 200);
             }catch (QueryException $exception){
-                return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->json(['error' => 'CLIENT NOT FOUND'], 500);
             }    
 
         
@@ -86,10 +82,10 @@ class ClientsController extends Controller
    public function destroy($id){
 
         try{
-            $client = $this->model->delete($id);
-            return response()->json(null, Response::HTTP_OK);
+            $client = Clients::delete($id);
+            return response()->json(['message' => 'CLIENT DELETED'], 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'CLIENT NOT FOUND'], 500);
         }
         
    }

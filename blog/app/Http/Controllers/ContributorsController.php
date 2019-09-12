@@ -10,74 +10,67 @@ use Symfony\Component\HttpFoundation\Response;
 class ContributorsController extends Controller
 {
     
-    private $model;
-
-    public function __construct(Contributors $contributors)
-    {
-        $this->model = $contributors;
-    }
-
     public function getAll(){
 
         try{
-            $contributors = $this->model->all();
-            if(count($contributors) > 0){
-                return response()->json($contributors, Response::HTTP_OK);
-            }else{
-                return response()->json([], Response::HTTP_OK);
-            }
+            $contributors = Contributors::all();
+            return response()->json($contributors, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'DATABASE ERROR'], 500);
         }
 
-       
-
-        
     }
 
     public function get($id){
         
         try{
-            $contributor = $this->model->find($id);
-            if($contributor!==null){
-                return response()->json($contributor, Response::HTTP_OK);
-            }else{
-                return response()->json(null, Response::HTTP_OK);
-            }
+            $contributor = Contributors::find($id);            
+            return response()->json($contributor, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'CONTRIBUTOR NOT FOUND'], 500);
         }
     
     }
 
     public function store(Request $req){
-        $validator = Validator::make(
-            $req->all(),
+         $this->validate(
+            $req,
             [
-                'name' => 'required | max:40 | min:3',
-                'email' => 'required | max:60 | min:3',
-                'phone' => 'required | max:13 | min:12',
-                'cpf' => 'required | max:11 | min:11',
+                'name' => 'required|max:40|min:3',
+                'email' => 'required|regex:/^.+@.+$/i',
+                'store_id' => 'required'
             ]
         );
         try{
-            $contributor = $this->model->create($req->all());
-            return response()->json($contributor, Response::HTTP_CREATED);
-        }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
 
+            $contributor = new Contributors();
+            $contributor->fill($req->all());
+            $contributor->save();
+            
+            return response()->json($contributor, 200);
+        }catch (QueryException $exception){
+            return response()->json(['error' => 'CONTRIBUTOR ERROR'], 500);
+        } 
         
     }
 
    public function update($id, Request $req){
+            $this->validate(
+                $req,
+                [
+                    'name' => 'required|max:40|min:3',
+                    'email' => 'required|regex:/^.+@.+$/i'
+                ]
+            );
+
             try{
-                $contributor = $this->model->find($id)
+                
+                $contributor = Contributors::find($id)
                     ->update($req->all());
         
-                return response()->json($contributor, Response::HTTP_OK);
+                return response()->json(Contributors::find($id), 200);
             }catch (QueryException $exception){
-                return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return response()->json(['error' => 'CONTRIBUTOR NOT FOUND'], 500);
             }    
 
         
@@ -86,10 +79,10 @@ class ContributorsController extends Controller
    public function destroy($id){
 
         try{
-            $contributor = $this->model->delete($id);
-            return response()->json(null, Response::HTTP_OK);
+            $contributor = Contributors::delete($id);
+            return response()->json(['message' => 'CONTRIBUTOR DELETED'], 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TROUBLE WITH DATABASE CONNECTION'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['error' => 'CONTRIBUTOR NOT FOUND'], 500);
         }
         
    }

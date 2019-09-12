@@ -60,15 +60,15 @@ $router->group(['prefix' => "/api/contributor"], function() use ($router){
 
 });
 
-$router->get("/api/acquisitions", "AcquisitionsController@getAll");
+$router->get("/api/transactions", "TransactionsController@getAll");
 
-$router->group(['prefix' => "/api/acquisition"], function() use ($router){
+$router->group(['prefix' => "/api/transaction"], function() use ($router){
 
-    $router->get("/{id}", "AcquisitionsController@get");
-    $router->post("/", "AcquisitionsController@store");
-    $router->put("/{id}", "AcquisitionsController@update");
-    $router->delete("/{id}", "AcquisitionsController@disable");
-    $router->delete("/{id}", "AcquisitionsController@destroy");
+    $router->get("/{id}", "TransactionsController@get");
+    $router->post("/", "TransactionsController@store");
+    $router->put("/{id}", "TransactionsController@update");
+    $router->delete("/{id}", "TransactionsController@disable");
+    $router->delete("/{id}", "TransactionsController@destroy");
 
 });
 
