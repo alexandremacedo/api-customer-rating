@@ -34,9 +34,13 @@ $ composer install
 $ php artisan migrate
 ```
 
+### Acesse a API
+
+(http://localhost:8000)
+
 # Consulte a documentação
 
-- Documentação da API (https://drive.google.com/open?id=1rO7i7KR5isPv2GBi9PaUT30QCRiy73PS)
+- Documentação da API (https://drive.google.com/open?id=1Mh3dkwE2lwueBwFOhzF1Xm4ciqYz4ZEU)
 
 # License
 The api-customer-rating is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
