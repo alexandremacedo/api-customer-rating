@@ -1,0 +1,20 @@
+app:
+  build: ./images/app
+  volumes:
+    - .:/var/www/app
+  ports:
+    - "8000:8080"
+  links:
+    - mysql
+
+mysql:
+  build: ./images/mysql
+  volumes:
+    - ./var/lib/mysql:/var/lib/mysql
+  ports:
+    - "3307:3306"
+  environment:
+    MYSQL_ROOT_PASSWORD: ratingapi
+    MSQL_DATABASE: ratingapi
+    MYSQL_USER: userratingapi
+    MYSQL_PASSWORD: passwordratingapi
