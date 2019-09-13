@@ -14,8 +14,8 @@ API para medir o nível de satisfação de clientes
 Com o Git instalado em sua sua máquina, abra o terminal. 
 Windows -> **cmd** ou **powershell** execute os comandos abaixo:
 ```ssh
-git clone https://github.com/AlexandreMacedoo/api-customer-rating.git
-cd api-customer-rating
+$ git clone https://github.com/AlexandreMacedoo/api-customer-rating.git
+$ cd api-customer-rating
 ```
 
 ### Configure o docker 
