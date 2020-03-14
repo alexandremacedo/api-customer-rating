@@ -17,4 +17,4 @@ mysql:
     MYSQL_ROOT_PASSWORD: ratingapi
     MSQL_DATABASE: ratingapi
     MYSQL_USER: userratingapi
-    MYSQL_PASSWORD: passwordratingapi
+    MYSQL_PASSWORD: ratingapi

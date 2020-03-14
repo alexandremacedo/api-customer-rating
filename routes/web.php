@@ -20,26 +20,22 @@ $router->get('/', function() use ($router){
 $router->get("/clients", "ClientsController@getAll");
 
 $router->group(['prefix' => "/client"], function() use ($router){
-
     $router->get("/{id}", "ClientsController@get");
     $router->post("/", "ClientsController@store");
     $router->put("/{id}", "ClientsController@update");
     $router->delete("/{id}", "ProductsController@disable");
     $router->delete("/{id}", "ClientsController@destroy");
-
 });
 
 
 $router->get("/products", "ProductsController@getAll");
 
 $router->group(['prefix' => "/product"], function() use ($router){
-
     $router->get("/{id}", "ProductsController@get");
     $router->post("/", "ProductsController@store");
     $router->put("/{id}", "ProductsController@update");
     $router->delete("/{id}", "ProductsController@disable");
     $router->delete("/{id}", "ProductsController@destroy");
-
 });
 
 $router->get("/stores", "StoresController@getAll");
