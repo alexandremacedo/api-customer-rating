@@ -28,7 +28,16 @@ class ClientsController extends Controller
             if(empty($client)){
                 return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 400);
             }
-            return response()->json($client, 200);
+
+            $clientInfo = [
+                "id" => $client["id"],
+                "name" => $client["name"],
+                "email" => $client["email"],
+                "phone" => $client["phone"],
+                "cpf" => $client["cpf"]
+            ];
+
+            return response()->json($clientInfo, 200);
         }catch (QueryException $exception){
             return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 500);
         }
@@ -53,38 +62,53 @@ class ClientsController extends Controller
             $client = new Clients();
             $client->fill($req->all());
             $client->save();
-            return response()->json($client, 200);
+
+            $clientInfo = [
+                "id" => $client["id"],
+                "name" => $client["name"],
+                "email" => $client["email"],
+                "phone" => $client["phone"],
+                "cpf" => $client["cpf"]
+            ];
+
+            return response()->json($clientInfo, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'CLIENT ERROR'], 500);
+            return response()->json(['error' => true, 'message' => 'CLIENT ERROR'], 500);
         }
     }
 
-   public function update($id, Request $req){
+    public function update($id, Request $req){
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'name' => 'max:40|min:3',
+                'email' => 'email',
+                'phone' => 'max:13|min:10',
+                'cpf' => 'string|cpf|unique:clients|max:11|min:11'
+            ]
+        );
 
-            $validator = Validator::make(
-                $req->all(),
-                [
-                    'name' => 'max:40|min:3',
-                    'email' => 'email',
-                    'phone' => 'max:13|min:10',
-                    'cpf' => 'string|unique:clients|cpf|max:11|min:11'
-                ]
-            );
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
 
-            if($validator->fails()){
-                return response()->json($validator->errors(), 400);
-            }
+        try{
+            Clients::find($id)->update($req->all());
 
-            try{
-                $client = Clients::find($id)
-                    ->update($req->all());
-                return response()->json(Clients::find($id), 200);
-            }catch (QueryException $exception){
-                return response()->json(['error' => 'CLIENT NOT FOUND'], 500);
-            }
+            $client = Clients::find($id);
 
-
-   }
+            $clientInfo = [
+                "id" => $client["id"],
+                "name" => $client["name"],
+                "email" => $client["email"],
+                "phone" => $client["phone"],
+                "cpf" => $client["cpf"]
+            ];
+            return response()->json($clientInfo, 200);
+        }catch (QueryException $exception){
+            return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 500);
+        }
+    }
 
     public function destroy($id){
 
@@ -94,9 +118,9 @@ class ClientsController extends Controller
                 return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 400);
             }
             $client->delete();
-            return response()->json(['message' => 'CLIENT DELETED'], 200);
+            return response()->json(['error' => false, 'message' =>  'CLIENT DELETED'], 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'CLIENT NOT FOUND'], 500);
+            return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 500);
         }
 
     }

@@ -12,14 +12,11 @@
 */
 
 $router->get('/', function() use ($router){
-
     return 'api-customer-rating';
-
 });
 
-$router->get("/clients", "ClientsController@getAll");
-
-$router->group(['prefix' => "/client"], function() use ($router){
+$router->group(['prefix' => "/clients"], function() use ($router){
+    $router->get("/", "ClientsController@getAll");
     $router->get("/{id}", "ClientsController@get");
     $router->post("/", "ClientsController@store");
     $router->put("/{id}", "ClientsController@update");
@@ -27,10 +24,8 @@ $router->group(['prefix' => "/client"], function() use ($router){
     $router->delete("/{id}", "ClientsController@destroy");
 });
 
-
-$router->get("/products", "ProductsController@getAll");
-
-$router->group(['prefix' => "/product"], function() use ($router){
+$router->group(['prefix' => "/products"], function() use ($router){
+    $router->get("/", "ProductsController@getAll");
     $router->get("/{id}", "ProductsController@get");
     $router->post("/", "ProductsController@store");
     $router->put("/{id}", "ProductsController@update");
@@ -38,22 +33,17 @@ $router->group(['prefix' => "/product"], function() use ($router){
     $router->delete("/{id}", "ProductsController@destroy");
 });
 
-$router->get("/stores", "StoresController@getAll");
-
-$router->group(['prefix' => "/store"], function() use ($router){
-
+$router->group(['prefix' => "/stores"], function() use ($router){
+    $router->get("/", "StoresController@getAll");
     $router->get("/{id}", "StoresController@get");
     $router->post("/", "StoresController@store");
     $router->put("/{id}", "StoresController@update");
     $router->delete("/{id}", "StoresController@disable");
     $router->delete("/{id}", "StoresController@destroy");
-
 });
 
-$router->get("/contributors", "ContributorsController@getAll");
-
-$router->group(['prefix' => "/contributor"], function() use ($router){
-
+$router->group(['prefix' => "/contributors"], function() use ($router){
+    $router->get("/", "ContributorsController@getAll");
     $router->get("/{id}", "ContributorsController@get");
     $router->post("/", "ContributorsController@store");
     $router->put("/{id}", "ContributorsController@update");
@@ -62,20 +52,15 @@ $router->group(['prefix' => "/contributor"], function() use ($router){
 
 });
 
-$router->group(['prefix' => "/transaction"], function() use ($router){
-
+$router->group(['prefix' => "/transactions"], function() use ($router){
+    $router->get("/", "TransactionsController@getAll");
     $router->post("/", "TransactionsController@store");
+    $router->get("/{id}", "TransactionsController@get");
     $router->put("/{id}", "TransactionsController@update");
-
 });
 
-$router->get("/ratings", "RatingsController@getAll");
-
-$router->group(['prefix' => "/rating"], function() use ($router){
-
+$router->group(['prefix' => "/ratings"], function() use ($router){
+    $router->get("/", "RatingsController@getAll");
     $router->get("/{id}", "RatingsController@get");
     $router->post("/", "RatingsController@store");
-
 });
-
-

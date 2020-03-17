@@ -29,9 +29,15 @@ class StoresController extends Controller
             if(empty($store)){
                 return response()->json(['error' => true, 'message' => 'STORE NOT FOUND'], 400);
             }
-            return response()->json($store, 200);
+
+            $storeInfo = [
+                "id" => $store["id"],
+                "name" => $store["name"]
+            ];
+
+            return response()->json($storeInfo, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'STORE NOT FOUND'], 500);
+            return response()->json(['error' => true, 'message' => 'STORE NOT FOUND'], 500);
         }
 
     }
@@ -52,38 +58,48 @@ class StoresController extends Controller
             $store = new Stores();
             $store->fill($req->all());
             $store->save();
-            return response()->json($store, 200);
+
+            $storeInfo = [
+                "id" => $store["id"],
+                "name" => $store["name"]
+            ];
+
+            return response()->json($storeInfo, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'STORE ERROR'], 500);
+            return response()->json(['error' => true, 'message' => 'STORE ERROR'], 500);
         }
 
     }
 
-   public function update($id, Request $req){
-            $validator = Validator::make(
-                $req->all(),
-                [
-                    'name' => 'max:40|min:3'
-                ]
-            );
+    public function update($id, Request $req){
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'name' => 'max:40|min:3'
+            ]
+        );
 
-            if($validator->fails()){
-                return response()->json($validator->errors(), 400);
-            }
+        if($validator->fails()){
+            return response()->json($validator->errors(), 400);
+        }
 
-            try{
+        try{
+            Stores::find($id)->update($req->all());
 
-                $store = Stores::find($id)
-                    ->update($req->all());
-                return response()->json(Stores::find($id), 200);
-            }catch (QueryException $exception){
-                return response()->json(['error' => 'STORE NOT FOUND'], 500);
-            }
+            $store = Stores::find($id);
 
+            $storeInfo = [
+                "id" => $store["id"],
+                "name" => $store["name"]
+            ];
 
-   }
+            return response()->json($storeInfo, 200);
+        }catch (QueryException $exception){
+            return response()->json(['error' => true, 'message' => 'STORE NOT FOUND'], 500);
+        }
+    }
 
-   public function destroy($id){
+    public function destroy($id){
 
         try{
             $store = Stores::where('id', $id)->first();
@@ -91,11 +107,11 @@ class StoresController extends Controller
                 return response()->json(['error' => true, 'message' => 'STORE NOT FOUND'], 400);
             }
             $store->delete();
-            return response()->json(['message' => 'STORE DELETED'], 200);
+            return response()->json(['error' => false, 'message' => 'STORE DELETED'], 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'STORE NOT FOUND'], 500);
+            return response()->json(['error' => true, 'message' => 'STORE NOT FOUND'], 500);
         }
 
-   }
+    }
 
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Transactions;
 use App\Models\Clients;
 use App\Models\Contributors;
+use App\Models\Stores;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,15 +28,23 @@ class TransactionsController extends Controller
     }
 
     public function get($id){
-
         try{
             $transaction = Transactions::find($id);
             if(empty($transaction)){
                 return response()->json(['error' => true, 'message' => 'TRANSACTION NOT FOUND'], 400);
             }
-            return response()->json($transaction, 200);
+
+            $transactionInfo = [
+                "id" => $transaction["id"],
+                "payment_amount" => $transaction["payment_amount"],
+                "created_at" => $transaction["created_at"],
+                "client_id" => $transaction["client_id"],
+                "contributor_id" => $transaction["contributor_id"]
+            ];
+
+            return response()->json($transactionInfo, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TRANSACTION NOT FOUND'], 500);
+            return response()->json(['error' => true, 'message' => 'TRANSACTION NOT FOUND'], 500);
         }
 
     }
@@ -57,57 +66,75 @@ class TransactionsController extends Controller
 
         $clientExists = Clients::find($req["client_id"]);
         if(empty($clientExists)){
-            return response()->json(['error' => 'CLIENT NOT FOUND'], 400);
+            return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 400);
         }
 
         $contributorExists = Contributors::find($req["contributor_id"]);
         if(empty($contributorExists)){
-            return response()->json(['error' => 'CONTRIBUTOR NOT FOUND'], 400);
+            return response()->json(['error' => true, 'message' => 'CONTRIBUTOR NOT FOUND'], 400);
         }
 
         try{
             $transaction = new Transactions();
             $transaction->fill($req->all());
             $transaction->save();
-            return response()->json($transaction, 200);
+
+            $transactionInfo = [
+                "id" => $transaction["id"],
+                "payment_amount" => $transaction["payment_amount"],
+                "created_at" => $transaction["created_at"],
+                "client_id" => $transaction["client_id"],
+                "contributor_id" => $transaction["contributor_id"]
+            ];
+
+            return response()->json($transactionInfo, 200);
         }catch (QueryException $exception){
-            return response()->json(['error' => 'TRANSACTION ERROR'], 500);
+            return response()->json(['error' => true, 'message' => 'TRANSACTION ERROR'], 500);
         }
 
     }
 
-   public function update($id, Request $req){
-            $validator = Validator::make(
-                $req->all(),
-                [
-                    'payment_amount' => 'numeric',
-                    'created_at' => 'date_format:Y-m-d H:i:s',
-                    'client_id' => 'numeric',
-                    'contributor_id' => 'numeric'
-                ]
-            );
+    public function update($id, Request $req){
+                $validator = Validator::make(
+                    $req->all(),
+                    [
+                        'payment_amount' => 'numeric',
+                        'client_id' => 'numeric',
+                        'contributor_id' => 'numeric'
+                    ]
+                );
 
-            if($validator->fails()){
-                return response()->json($validator->errors(), 400);
-            }
+                if($validator->fails()){
+                    return response()->json($validator->errors(), 400);
+                }
 
-            $clientExists = Clients::find($req["client_id"]);
-            if(empty($clientExists) && $req["client_id"] !== null){
-                return response()->json(['error' => 'CLIENT NOT FOUND'], 400);
-            }
+                $clientExists = Clients::find($req["client_id"]);
+                if(empty($clientExists) && $req["client_id"] !== null){
+                    return response()->json(['error' => true, 'message' => 'CLIENT NOT FOUND'], 400);
+                }
 
-            $contributorExists = Contributors::find($req["contributor_id"]);
-            if(empty($contributorExists) && $req["contributor_id"] !== null){
-                return response()->json(['error' => 'CONTRIBUTOR NOT FOUND'], 400);
-            }
+                $contributorExists = Contributors::find($req["contributor_id"]);
+                if(empty($contributorExists) && $req["contributor_id"] !== null){
+                    return response()->json(['error' => true, 'message' => 'CONTRIBUTOR NOT FOUND'], 400);
+                }
 
-            try{
-                $transaction = Transactions::find($id)
-                    ->update($req->all());
-                return response()->json(Transactions::find($id), 200);
-            }catch (QueryException $exception){
-                return response()->json(['error' => 'TRANSACTION NOT FOUND'], 500);
-            }
+                try{
+                    Transactions::find($id)->update($req->all());
 
-   }
+                    $transaction = Transactions::find($id);
+
+                    $transactionInfo = [
+                        "id" => $transaction["id"],
+                        "payment_amount" => $transaction["payment_amount"],
+                        "created_at" => $transaction["created_at"],
+                        "client_id" => $transaction["client_id"],
+                        "contributor_id" => $transaction["contributor_id"],
+                    ];
+
+                    return response()->json($transactionInfo, 200);
+                }catch (QueryException $exception){
+                    return response()->json(['error' => true, 'message' => 'TRANSACTION ERROR'], 500);
+                }
+
+    }
 }
