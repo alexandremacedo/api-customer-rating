@@ -70,7 +70,7 @@ $ php artisan migrate
 
 Rotas disponíveis:
 
-Verb | Path | Controller | Action 
+Method | Endpoint | Controller | Action 
 --- | --- | --- | --- 
 GET    | /clients                           | \app\Http\Controllers\ClientsController                | all        
 POST   | /clients                           | \app\Http\Controllers\ClientsController                | store      
